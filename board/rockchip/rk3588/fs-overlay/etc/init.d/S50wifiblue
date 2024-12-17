@@ -1,0 +1,16 @@
+#!/bin/sh
+case "$1" in
+	start|"")
+	insmod /system/lib/modules/bcmdhd.ko
+	sleep 1
+	chmod 777 /etc/init.d/wifi_loop_start.sh
+	nohup sh /etc/init.d/wifi_loop_start.sh &
+		;;
+	stop|status)
+		rmmod /system/lib/modules/bcmdhd
+		;;
+	*)
+		echo "Usage: start" >&2
+		exit 3
+		;;
+esac
