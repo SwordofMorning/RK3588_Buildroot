@@ -23,19 +23,3 @@ for i in /etc/init.d/S??* ;do
 	    ;;
     esac
 done
-
-# Reset GPS
-echo 141 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio141/direction
-echo 1 > /sys/class/gpio/gpio141/value
-echo 0 > /sys/class/gpio/gpio141/value
-echo 1 > /sys/class/gpio/gpio141/value
-
-/root/app/litelog/litelog &
-/root/app/mqtt/bin/mosquitto &
-
-while [ ! -e ${XDG_RUNTIME_DIR}/wayland-0 ]; do
-sleep .1
-done
-
-/root/app/ui/ui &
