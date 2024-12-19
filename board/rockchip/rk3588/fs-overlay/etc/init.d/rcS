@@ -31,15 +31,5 @@ echo 1 > /sys/class/gpio/gpio141/value
 echo 0 > /sys/class/gpio/gpio141/value
 echo 1 > /sys/class/gpio/gpio141/value
 
-# Init LED
-echo 62 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio62/direction
-echo 0 > /sys/class/gpio/gpio62/value
-
-# Init Red Pointer
-echo 4 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio4/direction
-echo 0 > /sys/class/gpio/gpio4/value
-
 /root/app/litelog/litelog &
 /root/app/mqtt/bin/mosquitto &
