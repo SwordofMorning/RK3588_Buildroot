@@ -40,6 +40,9 @@ start_user_app()
 	echo 0 > /sys/class/gpio/gpio141/value
 	echo 1 > /sys/class/gpio/gpio141/value
 
+	# USB RNDIS
+	ifconfig usb0 up
+
     # litelog
 	/root/app/litelog/litelog &
     if wait_for_process "litelog"; then
