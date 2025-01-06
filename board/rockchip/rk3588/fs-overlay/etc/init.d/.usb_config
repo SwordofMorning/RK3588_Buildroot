@@ -1,7 +1,2 @@
 usb_adb_en
 usb_rndis_en
-usb_ums_en
-ums_block=/userdata/ums_shared.img
-ums_block_size=1024
-ums_block_type=fat
-ums_block_auto_mount=on
