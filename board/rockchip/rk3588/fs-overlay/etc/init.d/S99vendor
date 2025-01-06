@@ -42,6 +42,7 @@ start_user_app()
 
 	# USB RNDIS
 	ifconfig usb0 up
+	ifconfig usb0 169.254.43.1 netmask 255.255.0.0 up
 
     # litelog
 	/root/app/litelog/litelog &
