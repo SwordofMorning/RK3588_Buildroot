@@ -23,3 +23,13 @@ for i in /etc/init.d/S??* ;do
 	    ;;
     esac
 done
+
+echo 1 > /dev/jp_hgd_gpio_ctl_enable_refrigerator
+
+export TZ=UTF-8
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/var/run}
+export LD_LIBRARY_PATH=/root/app/ui/test_lib
+
+/root/app/ui/jpGasDetection &
+sleep 5
+/root/app/ui/HGD &

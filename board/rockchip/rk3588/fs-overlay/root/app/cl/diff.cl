@@ -20,11 +20,5 @@ __kernel void compute_diff(
 
     float diff = fabs(curr_val - last_val);
 
-    // 基本阈值处理
-    if(diff < 10.0f) {
-        output[idx] = 0;
-        return;
-    }
-
     output[idx] = convert_ushort(diff);
 }
