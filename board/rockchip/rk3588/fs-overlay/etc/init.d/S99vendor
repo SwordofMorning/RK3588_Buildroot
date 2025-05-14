@@ -59,14 +59,6 @@ start_user_app()
     else
         echo "mosquitto Start Fail."
     fi
-
-    # # UI
-	# /root/app/ui/ui &
-    # if wait_for_process "ui"; then
-    #     echo "ui Start Success."
-    # else
-    #     echo "ui Start Fail."
-    # fi
 }
 
 start_weston()
