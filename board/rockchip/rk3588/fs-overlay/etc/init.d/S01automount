@@ -1,0 +1,81 @@
+#!/bin/sh -e
+# Auto mount partitions
+
+# 定义挂载信息
+MOUNT_POINTS="/app /oemven /userdata"
+DEVICES="/dev/mmcblk0p7 /dev/mmcblk0p8 /dev/mmcblk0p9"
+
+# 创建目录并挂载
+mount_partitions() {
+    echo -n "Mounting partitions... "
+    
+    # 创建挂载点（如果不存在）
+    for mount_point in $MOUNT_POINTS; do
+        if [ ! -d "$mount_point" ]; then
+            mkdir -p "$mount_point"
+            if [ $? -ne 0 ]; then
+                echo "Failed to create directory: $mount_point"
+                return 1
+            fi
+        fi
+    done
+
+    # 挂载分区
+    mount -t ext4 /dev/mmcblk0p7 /app
+    mount -t ext4 /dev/mmcblk0p8 /oemven
+    mount -t ext4 /dev/mmcblk0p9 /userdata
+
+    echo "done."
+    return 0
+}
+
+# 卸载分区
+umount_partitions() {
+    echo -n "Unmounting partitions... "
+    
+    # 逆序卸载分区
+    for device in $DEVICES; do
+        if mount | grep -q "$device"; then
+            umount "$device"
+            if [ $? -ne 0 ]; then
+                echo "Failed to unmount: $device"
+                return 1
+            fi
+        fi
+    done
+
+    echo "done."
+    return 0
+}
+
+# 检查挂载状态
+check_mounts() {
+    echo "Checking mount status:"
+    df -h | grep "mmcblk0p[789]"
+}
+
+case "$1" in
+    start)
+        echo "Starting auto mount..."
+        mount_partitions
+        check_mounts
+        ;;
+    stop)
+        echo "Stopping auto mount..."
+        umount_partitions
+        ;;
+    restart|reload)
+        echo "Restarting auto mount..."
+        umount_partitions
+        mount_partitions
+        check_mounts
+        ;;
+    status)
+        check_mounts
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
