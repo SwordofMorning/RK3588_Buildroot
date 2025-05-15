@@ -1,0 +1,25 @@
+#!/bin/sh -e
+# Stop Bootanimation
+
+case "$1" in
+	start)
+		echo -n "stoping bootanimation... "
+		killall bootanimation
+		echo "done."
+		;;
+	stop)
+		echo -n "stoping bootanimation... "
+		killall bootanimation
+		echo "done."
+		;;
+	restart|reload)
+		echo -n "stoping bootanimation... "
+		killall bootanimation
+		echo "done."
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit 0

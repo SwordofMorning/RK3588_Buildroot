@@ -1,0 +1,21 @@
+#!/bin/sh -e
+# Stop Bootanimation
+
+case "$1" in
+	start)
+		echo -n "Start wifi init... "
+		/root/sys/wifi/wifi.sh insmod
+		echo "done."
+		;;
+	stop)
+		# do nothing
+		;;
+	restart|reload)
+		# do nothing
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit 0
