@@ -7,7 +7,7 @@ OUTPUT_FILE="/root/sys/version/ver.ini"
 KERNEL_INFO=$(uname -a)
 # 提取完整版本号，然后只保留最后的commit hash
 KERNEL_VERSION=$(echo "$KERNEL_INFO" | awk '{print $3}' | grep -o '[a-f0-9]\{12\}$')
-KERNEL_BUILD_TIME=$(echo "$KERNEL_INFO" | awk '{print $7" "$8" "$9" "$10" "$11}')
+KERNEL_BUILD_TIME=$(echo "$KERNEL_INFO" | awk '{print $6" "$7" "$8" "$9" "$10" "$11}')
 
 # 获取fs信息
 FS_INFO=$(cat /etc/os-release)
@@ -15,7 +15,7 @@ FS_INFO=$(cat /etc/os-release)
 FS_VERSION=$(echo "$FS_INFO" | grep "VERSION=" | head -n 1 | cut -d'=' -f2 | tr -d '"' | sed 's/^-g//')
 FS_BUILD_INFO=$(echo "$FS_INFO" | grep "BUILD_INFO=" | cut -d'"' -f2)
 FS_BUILD_HOST=$(echo "$FS_BUILD_INFO" | awk '{print $1}')
-FS_BUILD_TIME=$(echo "$FS_BUILD_INFO" | awk '{print $2" "$3" "$4" "$5" "$6}')
+FS_BUILD_TIME=$(echo "$FS_BUILD_INFO" | awk '{print $2" "$3" "$4" "$5" "$6" "$7}')
 
 # 获取CPU序列号
 CPU_SERIAL=$(cat /proc/cpuinfo | grep "Serial" | awk '{print $3}')
