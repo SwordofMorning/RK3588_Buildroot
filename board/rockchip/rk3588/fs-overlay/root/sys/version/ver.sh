@@ -17,6 +17,9 @@ FS_BUILD_INFO=$(echo "$FS_INFO" | grep "BUILD_INFO=" | cut -d'"' -f2)
 FS_BUILD_HOST=$(echo "$FS_BUILD_INFO" | awk '{print $1}')
 FS_BUILD_TIME=$(echo "$FS_BUILD_INFO" | awk '{print $2" "$3" "$4" "$5" "$6}')
 
+# 获取CPU序列号
+CPU_SERIAL=$(cat /proc/cpuinfo | grep "Serial" | awk '{print $3}')
+
 # 创建ini文件
 cat > "$OUTPUT_FILE" << EOL
 ; System Version Information
@@ -36,6 +39,10 @@ version=${FS_VERSION}
 build_time=${FS_BUILD_TIME}
 ; Build host information
 build_host=${FS_BUILD_HOST}
+
+[hardware]
+; CPU serial number
+cpu_serial=${CPU_SERIAL}
 EOL
 
 # 检查文件是否创建成功
