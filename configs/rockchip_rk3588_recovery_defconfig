@@ -1,3 +1,7 @@
 #include "base/base.config"
 #include "base/recovery.config"
 #include "chips/rk3588_aarch64.config"
+BR2_PACKAGE_RECOVERY=y
+BR2_PACKAGE_RECOVERY_USE_UPDATEENGINE=y
+BR2_PACKAGE_RECOVERY_RECOVERYBIN=y
+BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN=y
