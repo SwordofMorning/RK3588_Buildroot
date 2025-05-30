@@ -2,8 +2,8 @@
 # Auto mount partitions
 
 # 定义挂载信息
-MOUNT_POINTS="/app /oemven /userdata"
-DEVICES="/dev/mmcblk0p7 /dev/mmcblk0p8 /dev/mmcblk0p9"
+MOUNT_POINTS="/app /oemven /vendor /hold /userdata"
+DEVICES="/dev/mmcblk0p7 /dev/mmcblk0p8 /dev/mmcblk0p9 /dev/mmcblk0p10 /dev/mmcblk0p11"
 
 # 创建目录并挂载
 mount_partitions() {
@@ -23,7 +23,9 @@ mount_partitions() {
     # 挂载分区
     mount -t ext4 /dev/mmcblk0p7 /app
     mount -t ext4 /dev/mmcblk0p8 /oemven
-    mount -t ext4 /dev/mmcblk0p9 /userdata
+    mount -t ext4 /dev/mmcblk0p9 /vendor
+    mount -t ext4 /dev/mmcblk0p10 /hold
+    mount -t ext4 /dev/mmcblk0p11 /userdata
 
     echo "done."
     return 0
@@ -33,8 +35,8 @@ mount_partitions() {
 umount_partitions() {
     echo -n "Unmounting partitions... "
     
-    # 逆序卸载分区
-    for device in $DEVICES; do
+    # 逆序卸载分区（从后往前，确保依赖关系）
+    for device in $(echo $DEVICES | tr ' ' '\n' | tac | tr '\n' ' '); do
         if mount | grep -q "$device"; then
             umount "$device"
             if [ $? -ne 0 ]; then
@@ -51,7 +53,7 @@ umount_partitions() {
 # 检查挂载状态
 check_mounts() {
     echo "Checking mount status:"
-    df -h | grep "mmcblk0p[789]"
+    df -h | grep "mmcblk0p[7-9]\|mmcblk0p1[0-1]"
 }
 
 case "$1" in
