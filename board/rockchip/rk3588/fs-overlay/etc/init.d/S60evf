@@ -1,0 +1,28 @@
+#!/bin/sh -e
+# Init EVF (Electronic Viewfinder)
+
+SCRIPT_PATH="/root/sys/evf/evf.sh"
+
+case "$1" in
+	start)
+		echo -n "Initializing EVF (Default Off)... "
+		if [ -x "$SCRIPT_PATH" ]; then
+			"$SCRIPT_PATH" off
+			echo "done."
+		else
+			echo "failed (script not found or not executable)."
+			exit 1
+		fi
+		;;
+	stop)
+		# do nothing
+		;;
+	restart|reload)
+		# do nothing
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit 0
