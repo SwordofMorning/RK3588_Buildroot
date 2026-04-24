@@ -59,6 +59,9 @@ start_user_app()
     else
         echo "mosquitto Start Fail."
     fi
+
+	# call /app/pre/app_run.sh
+	/app/pre/app_run.sh
 }
 
 start_weston()
