@@ -653,7 +653,7 @@ API_AP()
 
 # Brief: Scan SSID and write to file
 # Return: 0 success; 
-#         1 wpa_state not ready;
+#         1 wpa_supplicant init or state failed;
 #         2 scan failed;
 #         3 failed to get results;
 #         4 failed to write file
@@ -661,19 +661,51 @@ API_Scan()
 {
     local INTERFACE="wlan0"
     local WPA_PATH="/var/run/wpa_supplicant"
+    local WPA_CONF="/etc/wpa_supplicant.conf"
     local SCAN_FILE="${WPA_PATH}/scan.txt"
     local MAX_RETRY=3
     local SCAN_WAIT=3  # seconds to wait for scan completion
 
-    # Step 1: Check WPA state
-    echo "Checking WPA state..."
-    local state=$(wpa_cli -i ${INTERFACE} status | grep "wpa_state=" | cut -d'=' -f2)
-    if [ "$state" != "COMPLETED" ]; then
-        echo "WPA state not ready: $state"
-        return 1
+    # Step 1: Ensure interface and wpa_supplicant are ready for scanning
+    echo "Preparing interface and wpa_supplicant for scan..."
+    
+    # Bring up interface
+    ifconfig ${INTERFACE} up 2>/dev/null
+    
+    # Create directory if not exists
+    mkdir -p ${WPA_PATH}
+
+    # If wpa_supplicant is not running, start a basic instance for scanning
+    if ! pgrep -f "wpa_supplicant.*${INTERFACE}" >/dev/null; then
+        echo "Starting minimal wpa_supplicant for scanning..."
+        
+        # Create a basic config without specific network credentials
+        cat > ${WPA_CONF} <<EOL
+ctrl_interface=/var/run/wpa_supplicant
+ap_scan=1
+update_config=1
+EOL
+        
+        if ! wpa_supplicant -B -Dnl80211 -c ${WPA_CONF} -i ${INTERFACE}; then
+            echo "Failed to start wpa_supplicant"
+            return 1
+        fi
+        
+        # Wait a moment for the socket to be created and daemon to settle
+        sleep 2
     fi
 
-    # Step 2: Initiate scan
+    # Step 2: Check WPA state (relax condition, just ensure it responds)
+    echo "Checking WPA state..."
+    local state=$(wpa_cli -i ${INTERFACE} status 2>/dev/null | grep "wpa_state=" | cut -d'=' -f2)
+    
+    if [ -z "$state" ]; then
+        echo "Failed to communicate with wpa_supplicant socket"
+        return 1
+    fi
+    echo "Current WPA state: $state"
+
+    # Step 3: Initiate scan
     echo "Starting network scan..."
     for attempt in $(seq 1 $MAX_RETRY); do
         echo "Scan attempt $attempt of $MAX_RETRY"
@@ -688,7 +720,7 @@ API_Scan()
         # Wait for scan to complete
         sleep $SCAN_WAIT
 
-        # Step 3: Get scan results and process them
+        # Step 4: Get scan results and process them
         echo "Getting scan results..."
         local scan_results=$(wpa_cli -i ${INTERFACE} scan_results)
         if [ -z "$scan_results" ]; then
